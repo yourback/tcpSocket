@@ -1,34 +1,33 @@
 # tcpSocket
-python tcp_socket server and client with C command resolutions
-
+python tcp_socket server and client with C command resolutions</br> 
 
 # news
-1 add key "space" to let machine move free
+1 add key "space" to let machine move free</br> 
 
-2 when release keys(up down left right) send a stop order  
+2 when release keys(up down left right) send a stop order</br> 
 
 
 # how to use:
-C file to .so file order 
-//gcc -o py2cso.so -shared -fPIC order_analysis.c
+C file to .so file order</br> 
+gcc -o py2cso.so -shared -fPIC order_analysis.c</br> 
 
-contain 6 order below
+contain 6 order below</br> 
 
-up      go ahead    1
-down    go back     2
-left    go left     3
-right   go right    4
-space   move free   5
+up      go ahead    1</br> 
+down    go back     2</br> 
+left    go left     3</br> 
+right   go right    4</br> 
+space   move free   5</br> 
 
-the keys release all above trigger stop order 0
-and the keys follows will help you to define some new functions
+the keys release all above trigger stop order 0</br> 
+and the keys follows will help you to define some new functions</br> 
 
-home        customize1  5
-end         customize2  6
-page_up     customize3  7
-page_down   customize4  8
+home        customize1  5</br> 
+end         customize2  6</br> 
+page_up     customize3  7</br> 
+page_down   customize4  8</br> 
 
-remember to write c file use these order codes
+remember to write c file use these order codes</br>
 
 
 
