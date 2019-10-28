@@ -37,7 +37,7 @@ class SocketClient(object):
         while True:
             received = socket_client.recv(1024)  # struct.unpack("2B",sock.recv(1024))
             if received:
-                print("received order: {}".format(received))
+                # print("received order: {}".format(received))
                 if received == b'get_status':
                     self.socket.send(b"machine status:  xxxx xxxx xxxx")
                 elif received == b'stop':

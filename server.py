@@ -31,11 +31,14 @@ class SendOrderManager(object):
     # order : get machine status
     ORDER_GET_STATUS = 10
 
+    # order : heartbeat
+    ORDER_HEARTBEAT = 11
+
     def __init__(self, socket):
         # init .so file
         order_analysis = OrderAnalysis(c_file_name)
         # init key listener
-        kl = listenerkey.KeyListener(socket, order_analysis)
+        kl = listenerkey.KeyListener(socket, order_analysis, event)
         # if use the open/close order comment out next two sentences
         # init order info
         t_order_get_info = threading.Thread(target=self.send_order_gei_info, args=[socket, order_analysis])
@@ -66,8 +69,11 @@ class SendOrderManager(object):
         :return:
         """
         while True:
-            sleep(0.5)
+            sleep(1)
             socket.request.sendall(order_analysis.send_order(SendOrderManager.ORDER_GET_STATUS))
+            socket.request.sendall(order_analysis.send_order(SendOrderManager.ORDER_HEARTBEAT))
+            if event.isSet():
+                socket.request.sendall(order_analysis.send_order(SendOrderManager.ORDER_STOP))
 
 
 class RobotTestTCPHandler(socketserver.BaseRequestHandler):
@@ -82,16 +88,18 @@ class RobotTestTCPHandler(socketserver.BaseRequestHandler):
 
     def recv(self):
         while True:
-            print('接收信息')
-            print(self.request.recv(1024).strip())
-            print("{} return:".format(self.client_address[0]))
+            pass
+            # print('接收信息')
+            # print(self.request.recv(1024).strip())
+            # print("{} return:".format(self.client_address[0]))
 
 
 if __name__ == '__main__':
+    event = threading.Event()
+    event.set()
     HOST, PORT = "127.0.0.1", 8888
     server = socketserver.TCPServer((HOST, PORT), RobotTestTCPHandler)
     print("Server started, waiting for a connection...")
     server.serve_forever()
-
     # sm = SendManager()
     # sm.start()
