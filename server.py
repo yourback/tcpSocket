@@ -4,29 +4,43 @@ from time import sleep
 
 # from listenerkey import KeyListener
 import listenerkey
+from ctypesdemo import OrderAnalysis
 
-c_file_name = "./pycso.so"
+c_file_name = "./py2cso.so"
 
 
 class SendOrderManager(object):
     ts = []
     # order:move
-    ORDER_GO_AHEAD = 0
-    ORDER_GO_BACK = 1
-    ORDER_GO_LEFT = 2
-    ORDER_GO_RIGHT = 3
-    # order:keep get info of machine status or not
-    ORDER_OPEN = 4
-    ORDER_CLOSE = 5
+    ORDER_GO_AHEAD = 1
+    ORDER_GO_BACK = 2
+    ORDER_GO_LEFT = 3
+    ORDER_GO_RIGHT = 4
+    # order : stop move
+    ORDER_STOP = 0
+
+    # move by itself
+    ORDER_MOVE_FREE = 5
+
+    # order: customize
+    ORDER_CUSTOMIZE_1 = 6
+    ORDER_CUSTOMIZE_2 = 7
+    ORDER_CUSTOMIZE_3 = 8
+    ORDER_CUSTOMIZE_4 = 9
+
+    # order : get machine status
+    ORDER_GET_STATUS = 10
 
     def __init__(self, socket):
+        # init .so file
+        order_analysis = OrderAnalysis(c_file_name)
         # init key listener
-        kl = listenerkey.KeyListener(socket, c_file_name)
+        kl = listenerkey.KeyListener(socket, order_analysis)
         # if use the open/close order comment out next two sentences
         # init order info
-        # t_order_get_info = threading.Thread(target=self.send_order_gei_info)
+        t_order_get_info = threading.Thread(target=self.send_order_gei_info, args=[socket, order_analysis])
         # append thread
-        # self.ts.append(t_order_get_info)
+        self.ts.append(t_order_get_info)
 
         self.ts += kl.get_listeners()
 
@@ -46,14 +60,14 @@ class SendOrderManager(object):
     #         sleep(1)
     #         print('send order move')
 
-    def send_order_gei_info(self):
+    def send_order_gei_info(self, socket, order_analysis):
         """
         order get info
         :return:
         """
         while True:
             sleep(0.5)
-            print('send order get info')
+            socket.request.sendall(order_analysis.send_order(SendOrderManager.ORDER_GET_STATUS))
 
 
 class RobotTestTCPHandler(socketserver.BaseRequestHandler):
